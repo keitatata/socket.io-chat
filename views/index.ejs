@@ -10,43 +10,51 @@
   <h1>socket.ioのサンプルプログラム</h1>
   <div id="connectId"></div>
   <div id="type"></div>
+  <div id="msg"></div>
   <br>
-  <input type="text" id="message" value="">
-  <input type="button" value="メッセージを送る" onclick=SendMsg()>
+  <input type="text" id="msg_input" value="">
+  <input type="button" value="メッセージを送る" onclick="publishMessage();">
   <input type="button" value="切断する" onclick=DisConnect()>
   <div id="receiveMsg"></div>
   <script src="/socket.io/socket.io.js"></script>
   <script type="text/javascript">
   var socket = io.connect('http://localhost:3000');
-  // var socket = io.connect('http://10.211.55.2/');
-  socket.on('connect', function(msg) {
-    console.log("connet");
-    // document.getElementById("connectId").innerHTML = 
-    //   "あなたの接続ID::" + socket.socket.transport.sessid;
-    // document.getElementById("type").innerHTML = 
-    //   "接続方式::" + socket.socket.transport.name;
-  });
+  socket.on("connected", function(name) {});
+  socket.on("publish", function (data) { addMessage(data.value); });
+  socket.on("disconnect", function () {});
   
-  // メッセージを受けたとき
-  socket.on('message', function(msg) {
-    // メッセージを画面に表示する
-    document.getElementById("receiveMsg").innerHTML = msg.value;
-  });
-  
+  function start(name) {
+    socket.emit("connected", name);
+  }
   // メッセージを送る
   function SendMsg() {
     var msg = document.getElementById("message").value;
     // メッセージを発射する
     socket.emit('message', { value: msg });
   }
+
+  function publishMessage() {
+      var textInput = document.getElementById('msg_input');
+      var msg = "[" + myName + "] " + textInput.value;
+      socket.emit("publish", {value: msg});
+      textInput.value = '';
+  }
+
+  function addMessage (msg) {
+    var domMeg = document.createElement('div');
+    domMeg.innerHTML = new Date().toLocaleTimeString() + ' ' + msg;
+    msgArea.appendChild(domMeg);
+  }
   // 切断する
   function DisConnect() {
     var msg = socket.socket.transport.sessid + "は切断しました。";
-    // メッセージを発射する
     socket.emit('message', { value: msg });
-    // socketを切断する
     socket.disconnect();
   }
+  var msgArea = document.getElementById("msg");
+  var myName = Math.floor(Math.random()*100) + "さん";
+  addMessage("貴方は" + myName + "として入室しました");
+  start(myName);
   </script>
   </body>
 </html>
