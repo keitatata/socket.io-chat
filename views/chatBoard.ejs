@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+
+  <h1>socket.ioのサンプルプログラム</h1>
+  <div id="connectId"></div>
+  <div id="type"></div>
+  <div id="msg"></div>
+  <br>
+  <input type="text" id="msg_input" value="">
+  <input type="button" value="メッセージを送る" onclick="publishMessage();">
+  <input type="button" value="切断する" onclick=DisConnect()>
+  <div id="receiveMsg"></div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript">
+  var socket = io.connect('http://localhost:3000');
+  // socket.on("connected", function(name) {});
+  socket.on("publish", function (data) {
+    addMessage(data.value); 
+  });
+  socket.on("disconnect", function () {});
+  
+  function start(name) {
+    socket.emit("connected", name);
+  }
+
+  function publishMessage() {
+      var textInput = document.getElementById('msg_input');
+      var msg = "[" + myName + "] " + textInput.value;
+      socket.emit("publish", {value: msg});
+      textInput.value = '';
+  }
+
+  function addMessage (msg) {
+    // ⇩divタグを作るメソッド？？
+    var domMeg = document.createElement('div');
+    console.log(domMeg);
+    domMeg.innerHTML = new Date().toLocaleTimeString() + ' ' + msg;
+    msgArea.appendChild(domMeg);
+  }
+  
+  function DisConnect() {
+    var msg = socket.socket.transport.sessid + "は切断しました。";
+    socket.emit('message', { value: msg });
+    socket.disconnect();
+  }
+
+  var msgArea = document.getElementById("msg");
+  var myName = Math.floor(Math.random()*100) + "さん";
+  addMessage("貴方は" + myName + "として入室しました");
+  start(myName);
+  </script>
+  </body>
+</html>
