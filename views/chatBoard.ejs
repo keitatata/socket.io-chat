@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+    <link rel="stylesheet" href="//cdn.rawgit.com/necolas/normalize.css/master/normalize.css">
+    <link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
   </head>
   <body>
 
-  <h1>socket.ioのサンプルプログラム</h1>
+  <h1>チャットボード</h1>
   <div id="connectId"></div>
   <div id="type"></div>
   <div id="msg"></div>
@@ -15,6 +18,7 @@
   <input type="text" id="msg_input" value="">
   <input type="button" value="メッセージを送る" onclick="publishMessage();">
   <input type="button" value="切断する" onclick=DisConnect()>
+  <a href="/" class="btn">トップへもどる</a>
   <div id="receiveMsg"></div>
   <script src="/socket.io/socket.io.js"></script>
   <script type="text/javascript">
